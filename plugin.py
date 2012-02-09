@@ -36,10 +36,28 @@ import supybot.callbacks as callbacks
 
 
 class Lebowski(callbacks.Plugin):
-    """Add the help for "@plugin help Lebowski" here
-    This should describe *how* to use this plugin."""
+    """This plugin provides some cool things for users."""
     threaded = True
 
+#    def lebowski_reg(self, irc, msg, args, ircnick, twitternick):
+#        d = Lebowski.registryValue('twitterDict')
+#        try:
+#            d[ircnick] = twitternick
+#        else:
+#            irc.reply("""Mapping added.""")
+#    lebowski_reg = wrap(lebowski_reg, ['text'], ['text'])
+
+    def hadoken(self, irc, msg, args):
+        """This command takes no arguments.
+
+        Let everyone know that they should come get beat up by Guile."""
+        users = {'Newfie':'@HWHQNewfie', 'C4':'@ceephour', 'that_guy':'@nliadm'}
+        twitterstr = 'post HADOKEN! ' + " ".join(users.values())
+        ircstring = 'MY FIGHT MONEY! ' + " ".join(users.keys())
+
+        irc.reply(ircstring)
+        self.Proxy(irc.irc, msg, callbacks.tokenize(twitterstr))
+    hadoken = wrap(hadoken)
 
 Class = Lebowski
 
