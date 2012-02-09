@@ -48,7 +48,7 @@ class Lebowski(callbacks.Plugin):
 #    lebowski_reg = wrap(lebowski_reg, ['text'], ['text'])
 
     def hadoken(self, irc, msg, args):
-        """This command takes no arguments.
+        """takes no arguments
 
         Let everyone know that they should come get beat up by Guile."""
         users = {'Newfie':'@HWHQNewfie', 'C4':'@ceephour', 'that_guy':'@nliadm'}
