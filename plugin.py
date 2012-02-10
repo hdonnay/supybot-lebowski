@@ -65,7 +65,7 @@ class Lebowski(callbacks.Plugin):
         self.db.add(twitternick, ircnick)
     add = wrap(add, ['text', 'text'])
 
-    def list(self, irc, msg):
+    def list(self, irc, msg, args):
         """takes no arguments
 
         List known associations."""
