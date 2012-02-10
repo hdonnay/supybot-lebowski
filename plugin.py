@@ -63,7 +63,7 @@ class Lebowski(callbacks.Plugin):
 
         Associate two nicks across services."""
         self.db.add(twitternick, ircnick)
-    lebowski_reg = wrap(lebowski_reg, ['text'], ['text'])
+    lebowski_reg = wrap(lebowski_reg, ['text', 'text'])
 
     def lebowski_list(self, irc, msg):
         """takes no arguments
