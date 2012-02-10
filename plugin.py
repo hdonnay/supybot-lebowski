@@ -33,19 +33,44 @@ from supybot.commands import *
 import supybot.plugins as plugins
 import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
+import supybot.dbi as dbi
 
+class nickRecord(dbi.Record):
+    __fields__ = ['twitternick', 'ircnick']
+
+class nickDB(plugins.DbiChannelDB):
+    class DB(dbi.DB):
+        Record = nickRecord
+        def add(self, twitternick, ircnick):
+            record = self.Record(twitternick=twitternick, ircnick=ircnick)
+            super(self.__class__, self).add(record)
+        def nicks(self):
+            return list(self)
+
+NICKDB = plugins.DB('nick', {'flat': nickDB})
 
 class Lebowski(callbacks.Plugin):
     """This plugin provides some cool things for users."""
     threaded = True
 
-#    def lebowski_reg(self, irc, msg, args, ircnick, twitternick):
-#        d = Lebowski.registryValue('twitterDict')
-#        try:
-#            d[ircnick] = twitternick
-#        else:
-#            irc.reply("""Mapping added.""")
-#    lebowski_reg = wrap(lebowski_reg, ['text'], ['text'])
+    def __init__(self, irc):
+        self.__parent = super(Lebowski, self)
+        self.__parent.__init__(irc)
+        self.db = NICKDB()
+
+    def lebowski_reg(self, irc, msg, args, ircnick, twitternick):
+        """<ircnick> <twitternick>
+
+        Associate two nicks across services."""
+        self.db.add(twitternick, ircnick)
+    lebowski_reg = wrap(lebowski_reg, ['text'], ['text'])
+
+    def lebowski_list(self, irc, msg):
+        """takes no arguments
+
+        List known associations."""
+        irc.reply( ", ".join(self.db.nicks))
+    lebowski_list = wrap(lebowski_list)
 
     def hadoken(self, irc, msg, args):
         """takes no arguments
