@@ -65,6 +65,8 @@ class Lebowski(callbacks.Plugin):
         chan = msg.args[0]
         try:
             self.db.add(chan, twitternick, ircnick)
+        except:
+            irc.reply("You dun goofed")
         else:
             irc.reply("Added.")
     add = wrap(add, ['nick', 'something'])
