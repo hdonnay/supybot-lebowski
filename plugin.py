@@ -63,7 +63,10 @@ class Lebowski(callbacks.Plugin):
 
         Associate two nicks across services."""
         chan = msg.args[0]
-        self.db.add(chan, twitternick, ircnick)
+        try:
+            self.db.add(chan, twitternick, ircnick)
+        else:
+            irc.reply("Added.")
     add = wrap(add, ['nick', 'something'])
 
     def list(self, irc, msg, args):
@@ -71,7 +74,12 @@ class Lebowski(callbacks.Plugin):
 
         List known associations."""
         chan = msg.args[0]
-        irc.reply( ", ".join(self.db.nicks(chan)))
+        irc.reply( "known irc nicks:")
+        for nick in self.db.ircnick(chan):
+            irc.reply("\t"+nick)
+        irc.reply( "known twitter nicks:")
+        for nick in self.db.twitternick(chan):
+            irc.reply("\t"+nick)
     list = wrap(list)
 
     def hadoken(self, irc, msg, args):
