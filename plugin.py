@@ -78,7 +78,7 @@ class Lebowski(callbacks.Plugin):
         chan = msg.args[0]
         irc.reply( "known nicks:")
         for nick in self.db.nicks(chan):
-            irc.reply("\t"+nick)
+            irc.reply(nick)
     list = wrap(list)
 
     def hadoken(self, irc, msg, args):
