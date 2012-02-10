@@ -62,14 +62,14 @@ class Lebowski(callbacks.Plugin):
         """<ircnick> <twitternick>
 
         Associate two nicks across services."""
-        self.db.add(twitternick, ircnick)
+        self.db.add(self, twitternick, ircnick)
     add = wrap(add, ['nick', 'something'])
 
     def list(self, irc, msg, args):
         """takes no arguments
 
         List known associations."""
-        irc.reply( ", ".join(self.db.nicks))
+        irc.reply( ", ".join(self.db.nicks(self)))
     list = wrap(list)
 
     def hadoken(self, irc, msg, args):
