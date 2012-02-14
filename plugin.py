@@ -44,10 +44,28 @@ class nickDB(plugins.DbiChannelDB):
         def add(self, twitternick, ircnick):
             record = self.Record(twitternick=twitternick, ircnick=ircnick)
             super(self.__class__, self).add(record)
-        def nicks(self):
+        def list(self):
             return list(self)
 
 NICKDB = plugins.DB('nick', {'flat': nickDB})
+
+class gameRecord(dbi.Record):
+    __fields__ = ['game', 'nicklist']
+
+class gameDB(plugins.DbiChannelDB):
+    class DB(dbi.DB):
+        Record = gameRecord
+        def add(self, game, nicklist):
+            record = self.Record(game=game, nicklist=nicklist)
+            super(self.__class__, self).add(record)
+        def getUsers(self, game):
+            for pair in super(self.__class__, self).list(self):
+                if pair.game is game:
+                    return pair.nicklist.split()
+        def list(self):
+            return list(self)
+
+GAMEDB = plugins.DB('game', {'flat': nickDB})
 
 class Lebowski(callbacks.Plugin):
     """This plugin provides some cool things for users."""
@@ -56,7 +74,8 @@ class Lebowski(callbacks.Plugin):
     def __init__(self, irc):
         self.__parent = super(Lebowski, self)
         self.__parent.__init__(irc)
-        self.db = NICKDB()
+        self.nickdb = NICKDB()
+        self.gamedb = GAMEDB()
 
     def add(self, irc, msg, args, ircnick, twitternick):
         """<ircnick> <twitternick>
@@ -64,11 +83,11 @@ class Lebowski(callbacks.Plugin):
         Associate two nicks across services."""
         chan = msg.args[0]
         try:
-            self.db.add(chan, twitternick, ircnick)
+            self.nickdb.add(chan, twitternick, ircnick)
         except:
             irc.reply("You dun goofed")
         else:
-            irc.reply("Added.")
+            irc.reply("Added association")
     add = wrap(add, ['nick', 'something'])
 
     def list(self, irc, msg, args):
@@ -76,16 +95,24 @@ class Lebowski(callbacks.Plugin):
 
         List known associations."""
         chan = msg.args[0]
-        irc.reply( "known nicks:")
-        for nick in self.db.nicks(chan):
-            irc.reply(nick.twitternick.strip() + " -> " + nick.ircnick.strip())
+        irc.reply( "Known nicks:")
+        for nick in self.nickdb.list(chan):
+            irc.reply("    " + nick.ircnick.strip() + " -> " + nick.twitternick.strip())
     list = wrap(list)
+
+    def funny(self, irc, msg, args):
+        """takes no arguments
+
+        Soothes your fragile ego."""
+        irc.reply( "lololololol. That was quite funny." )
+    funny = wrap(funny)
 
     def hadoken(self, irc, msg, args):
         """takes no arguments
 
         Let everyone know that they should come get beat up by Guile."""
-        users = {'Newfie':'@HWHQNewfie', 'C4':'@ceephour', 'that_guy':'@nliadm'}
+        users = self.gamedb.getUsers(chan, "SSFIVAE")
+        ####
         twitterstr = 'post HADOKEN! ' + " ".join(users.values())
         ircstring = 'MY FIGHT MONEY! ' + " ".join(users.keys())
 
