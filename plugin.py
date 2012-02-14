@@ -118,7 +118,7 @@ class Lebowski(callbacks.Plugin):
         users = self.gamedb.getUsers(chan, "SSFIVAE")
         twitternicks = []
         for nick in users:
-            twitternick.append(self.nickdb.getTwitter(nicks)
+            twitternicks.append(self.nickdb.getTwitter(nick)
 
         twitterstr = 'post HADOKEN! ' + " ".join(twitternicks)
         ircstring = 'MY FIGHT MONEY! ' + " ".join(users)
