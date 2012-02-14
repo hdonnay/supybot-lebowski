@@ -44,6 +44,10 @@ class nickDB(plugins.DbiChannelDB):
         def add(self, twitternick, ircnick):
             record = self.Record(twitternick=twitternick, ircnick=ircnick)
             super(self.__class__, self).add(record)
+        def getTwitter(self, ircnick):
+            for pair in super(self.__class__, self).list(self):
+                if pair.ircnick is ircnick:
+                    return pair.twitternick.strip()
         def list(self):
             return list(self)
 
@@ -112,9 +116,12 @@ class Lebowski(callbacks.Plugin):
 
         Let everyone know that they should come get beat up by Guile."""
         users = self.gamedb.getUsers(chan, "SSFIVAE")
-        ####
-        twitterstr = 'post HADOKEN! ' + " ".join(users.values())
-        ircstring = 'MY FIGHT MONEY! ' + " ".join(users.keys())
+        twitternicks = []
+        for nick in users:
+            twitternick.append(self.nickdb.getTwitter(nicks)
+
+        twitterstr = 'post HADOKEN! ' + " ".join(twitternicks)
+        ircstring = 'MY FIGHT MONEY! ' + " ".join(users)
 
         irc.reply(ircstring)
         self.Proxy(irc.irc, msg, callbacks.tokenize(twitterstr))
