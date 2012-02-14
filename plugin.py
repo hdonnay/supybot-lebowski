@@ -66,6 +66,11 @@ class gameDB(plugins.DbiChannelDB):
             for pair in super(self.__class__, self).list(self):
                 if pair.game is game:
                     return pair.nicklist.split()
+        def gameExists(self, game):
+            for pair in super(self.__class__, self).list(self):
+                if pair.game is game:
+                    return True
+            return False
         def list(self):
             return list(self)
 
@@ -110,6 +115,16 @@ class Lebowski(callbacks.Plugin):
         Soothes your fragile ego."""
         irc.reply( "lololololol. That was quite funny." )
     funny = wrap(funny)
+
+    def gameadd(self, irc, msg, args, game, ircnick):
+        """<game> <ircnick>
+
+        Adds the <ircnick> to the list for <game>."""
+        if (self.gamedb.gameExists(game)):
+            self.gamedb.add(game, self.gamedb.getUsers+" "+ircnick)
+        else:
+            self.gamedb.add(game, ircnick)
+    gameadd = wrap(gameadd, ['something', 'something'])
 
     def hadoken(self, irc, msg, args):
         """takes no arguments
