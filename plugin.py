@@ -121,9 +121,9 @@ class Lebowski(callbacks.Plugin):
 
         Adds the <ircnick> to the list for <game>."""
         if (self.gamedb.gameExists(game)):
-            self.gamedb.add(game, self.gamedb.getUsers+" "+ircnick)
+            self.gamedb.add(chan, game, self.gamedb.getUsers+" "+ircnick)
         else:
-            self.gamedb.add(game, ircnick)
+            self.gamedb.add(chan, game, ircnick)
     gameadd = wrap(gameadd, ['something', 'something'])
 
     def hadoken(self, irc, msg, args):
@@ -141,6 +141,23 @@ class Lebowski(callbacks.Plugin):
         irc.reply(ircstring)
         self.Proxy(irc.irc, msg, callbacks.tokenize(twitterstr))
     hadoken = wrap(hadoken)
+
+    def gamenotify(self, irc, msg, args, game):
+        """<game>
+
+        Let everyone know that they should come get beat up by whoever that_guy
+        plays in <game>."""
+        users = self.gamedb.getUsers(chan, game)
+        twitternicks = []
+        for nick in users:
+            twitternicks.append(self.nickdb.getTwitter(nick))
+
+        twitterstr = 'post Time for ' + game + ' ' + " ".join(twitternicks)
+        ircstring = 'Hey asshats, come play '+ game + ": " + " ".join(users)
+
+        irc.reply(ircstring)
+        self.Proxy(irc.irc, msg, callbacks.tokenize(twitterstr))
+    gamenotify = wrap(gamenotify, ['something'])
 
 Class = Lebowski
 
