@@ -116,6 +116,15 @@ class Lebowski(callbacks.Plugin):
         irc.reply( "lololololol. That was quite funny." )
     funny = wrap(funny)
 
+    def isthisthingon(self, irc, msg, args):
+        """takes no arguments
+
+        Re-assures you that you're not alone."""
+        f = os.popen('fortune -o')
+        for line in f.readlines():
+            irc.reply(line)
+    isthisthingon= wrap(isthisthingon)
+
     def gameadd(self, irc, msg, args, game, ircnick):
         """<game> <ircnick>
 
